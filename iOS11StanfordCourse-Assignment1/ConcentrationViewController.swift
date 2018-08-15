@@ -13,7 +13,6 @@ class ConcentrationViewController: UIViewController {
 
     // Model
     lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
-    
     var flipCount = 0 {
         didSet { flipCountLabel.text = "Flips: \(flipCount)" }
     }
@@ -21,17 +20,36 @@ class ConcentrationViewController: UIViewController {
     // View
     @IBOutlet var cardButtons: [UIButton]!
     @IBOutlet weak var flipCountLabel: UILabel!
+    @IBOutlet weak var scoreLabel: UILabel!
     
-    var emojiChoices = ["🦇", "😱", "🙀", "😈", "🎃", "👻", "🍭", "🍬", "🍎", "🧛🏻‍♂️", "🧟‍♂️"]
+    var themes = ["Halloween" : ["🦇", "😱", "🙀", "😈", "🎃", "👻", "🍭", "🍬", "🍎", "🧛🏻‍♂️", "🧟‍♂️"],
+                  "AnimalFaces" : ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐵"],
+                  "Animals" : ["🦆", "🦅", "🦋", "🐌", "🐞", "🐢", "🐍", "🦑", "🦐", "🦀", "🐬", "🐅", "🦍", "🐘", "🐪", "🦒", "🐄", "🐖", "🐏", "🐓", "🐇"],
+                  "Sports" : ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🏒", "🏑", "🏏"],
+                  "Faces" : ["😂", "☺️", "😇", "🙃", "😜", "🤨", "🤩", "😏", "😫", "😭", "🤬", "🤯", "😱", "🤫", "🤥", "🙄", "😴", "🤤", "😵", "🤧", "🤒"],
+                  "Winter" : ["🤧", "🌂", "🌨", "⛈", "❄️", "⛄️", "☔️", "⛷", "🏂", "🎄", "🎅🏼"]]
+    var emojiChoices = [String]()
     var emoji = [Int:String]()
     
     
-    @IBAction func newGame(_ sender: UIButton) {
-        game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1)/2)
-        updateViewFromModel()
-        flipCount = 0
-        emojiChoices += Array(emoji.values)
+    override func viewDidLoad() {
+        newGame()
+    }
+    
+    func newGame() {
+        game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+        //random theme
+        let themeIndex = Int(arc4random_uniform(UInt32(themes.count)))
+        emojiChoices = themes[Array(themes.keys)[themeIndex]]!
         emoji.removeAll()
+        
+        //update UI
+        flipCount = 0
+        updateViewFromModel()
+    }
+    
+    @IBAction func touchNewGame(_ sender: UIButton) {
+        newGame()
     }
     
     @IBAction func touchCard(_ sender: UIButton) {
