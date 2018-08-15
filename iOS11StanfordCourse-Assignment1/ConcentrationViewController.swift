@@ -38,7 +38,7 @@ class ConcentrationViewController: UIViewController {
         //set random theme
         let themeIndex = Int(arc4random_uniform(UInt32(themes.count)))
         emojiChoices = themes[Array(themes.keys)[themeIndex]]!
-        emoji.removeAll()
+        emoji = [Int:String]()
         
         //update UI
         updateViewFromModel()
