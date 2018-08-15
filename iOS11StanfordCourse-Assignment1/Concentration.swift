@@ -20,7 +20,11 @@ class Concentration {
             let card = Card()
             cards += [card, card]
         }
-        // TODO: Shuffle the cards
+        //shuffle the cards
+        for index in cards.indices.reversed() {
+            let randomIndex = Int(arc4random_uniform(UInt32(index)))
+            cards.swapAt(index, randomIndex)
+        }
     }
     
     func chooseCard(at index: Int) {
