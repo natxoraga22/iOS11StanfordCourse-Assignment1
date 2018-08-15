@@ -13,9 +13,6 @@ class ConcentrationViewController: UIViewController {
 
     // Model
     lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
-    var flipCount = 0 {
-        didSet { flipCountLabel.text = "Flips: \(flipCount)" }
-    }
     
     // View
     @IBOutlet var cardButtons: [UIButton]!
@@ -38,13 +35,12 @@ class ConcentrationViewController: UIViewController {
     
     func newGame() {
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
-        //random theme
+        //set random theme
         let themeIndex = Int(arc4random_uniform(UInt32(themes.count)))
         emojiChoices = themes[Array(themes.keys)[themeIndex]]!
         emoji.removeAll()
         
         //update UI
-        flipCount = 0
         updateViewFromModel()
     }
     
@@ -53,13 +49,13 @@ class ConcentrationViewController: UIViewController {
     }
     
     @IBAction func touchCard(_ sender: UIButton) {
-        flipCount += 1
         let cardNumber = cardButtons.index(of: sender)
         game.chooseCard(at: cardNumber!)
         updateViewFromModel()
     }
     
     func updateViewFromModel() {
+        //cards
         for index in cardButtons.indices {
             let button = cardButtons[index]
             let card = game.cards[index]
@@ -72,6 +68,9 @@ class ConcentrationViewController: UIViewController {
                 button.backgroundColor = card.isMatched ? #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0) : #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
             }
         }
+        //flips & score
+        flipCountLabel.text = "Flips\n\(game.flipCount)"
+        scoreLabel.text = "Score\n\(game.score)"
     }
     
     func emoji(for card: Card) -> String {

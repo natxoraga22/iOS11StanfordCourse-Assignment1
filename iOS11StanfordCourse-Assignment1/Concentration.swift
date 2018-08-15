@@ -13,6 +13,9 @@ class Concentration {
     
     var cards = [Card]()
     var indexOfFaceUpCard: Int?
+    var flippedIdentifiers = Set<Int>()
+    var flipCount = 0
+    var score = 0
     
     
     init(numberOfPairsOfCards: Int) {
@@ -32,20 +35,27 @@ class Concentration {
             if let matchIndex = indexOfFaceUpCard, matchIndex != index {
                 //check if cards match
                 if cards[matchIndex].identifier == cards[index].identifier {
+                    //MATCH!
                     cards[matchIndex].isMatched = true
                     cards[index].isMatched = true
+                    score += 2
                 }
-                cards[index].isFaceUp = true
+                else {
+                    //MISMATCH!
+                    if flippedIdentifiers.contains(cards[matchIndex].identifier) { score -= 1 }
+                    if cards[index].hasBeenFaceUp { score -= 1 }
+                    flippedIdentifiers.insert(cards[matchIndex].identifier)
+                    flippedIdentifiers.insert(cards[index].identifier)
+                }
                 indexOfFaceUpCard = nil
             }
             else {
-                //either no cards or two cards are face up
-                for flipDownIndex in cards.indices {
-                    cards[flipDownIndex].isFaceUp = false
-                }
-                cards[index].isFaceUp = true
+                //either no cards are face up or two cards are already face up
+                for flipDownIndex in cards.indices { cards[flipDownIndex].isFaceUp = false }
                 indexOfFaceUpCard = index
             }
+            cards[index].isFaceUp = true
+            flipCount += 1
         }
     }
     

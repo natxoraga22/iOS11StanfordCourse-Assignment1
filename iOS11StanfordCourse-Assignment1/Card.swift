@@ -20,7 +20,10 @@ struct Card {
     }
     
     // Variable properties & methods
-    var isFaceUp = false
+    var isFaceUp = false {
+        didSet { if isFaceUp { hasBeenFaceUp = true } }
+    }
+    var hasBeenFaceUp = false
     var isMatched = false
     var identifier: Int
     
