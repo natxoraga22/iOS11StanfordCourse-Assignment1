@@ -12,36 +12,29 @@ import UIKit
 class ConcentrationViewController: UIViewController {
 
     // Model
-    lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+    var game: Concentration!
     
     // View
     @IBOutlet var cardButtons: [UIButton]!
     @IBOutlet weak var flipCountLabel: UILabel!
     @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var newGameButton: UIButton!
     
-    var themes = ["Halloween" : ["🦇", "😱", "🙀", "😈", "🎃", "👻", "🍭", "🍬", "🍎", "🧛🏻‍♂️", "🧟‍♂️"],
-                  "AnimalFaces" : ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐵"],
-                  "Animals" : ["🦆", "🦅", "🦋", "🐌", "🐞", "🐢", "🐍", "🦑", "🦐", "🦀", "🐬", "🐅", "🦍", "🐘", "🐪", "🦒", "🐄", "🐖", "🐏", "🐓", "🐇"],
-                  "Sports" : ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🏒", "🏑", "🏏"],
-                  "Faces" : ["😂", "☺️", "😇", "🙃", "😜", "🤨", "🤩", "😏", "😫", "😭", "🤬", "🤯", "😱", "🤫", "🤥", "🙄", "😴", "🤤", "😵", "🤧", "🤒"],
-                  "Winter" : ["🤧", "🌂", "🌨", "⛈", "❄️", "⛄️", "☔️", "⛷", "🏂", "🎄", "🎅🏼"]]
-    var emojiChoices = [String]()
-    var emoji = [Int:String]()
+    var themes = [
+        Theme(emojis: ["🦇", "😱", "🙀", "😈", "🎃", "👻", "🍭", "🍬", "🍎", "🧛🏻‍♂️", "🧟‍♂️"], primaryColor: #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1), secondaryColor: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)),
+        Theme(emojis: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐵"], primaryColor: #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1), secondaryColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)),
+        Theme(emojis: ["🦆", "🦅", "🦋", "🐌", "🐞", "🐢", "🐍", "🦑", "🦐", "🦀", "🐬", "🐅", "🦍", "🐘", "🐪", "🦒", "🐄", "🐖", "🐏", "🐓", "🐇"], primaryColor: #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1), secondaryColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)),
+        Theme(emojis: ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🏒", "🏑", "🏏"], primaryColor: #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1), secondaryColor: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)),
+        Theme(emojis: ["😂", "☺️", "😇", "🙃", "😜", "🤨", "🤩", "😏", "😫", "😭", "🤬", "🤯", "😱", "🤫", "🤥", "🙄", "😴", "🤤", "😵", "🤧", "🤒"], primaryColor: #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1), secondaryColor: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)),
+        Theme(emojis: ["🤧", "🌂", "🌨", "⛈", "❄️", "⛄️", "☔️", "⛷", "🏂", "🎄", "🎅🏼"], primaryColor: #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1), secondaryColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
+    ]
+    
+    var chosenTheme: Theme!
+    var emoji: [Int:String]!
     
     
     override func viewDidLoad() {
         newGame()
-    }
-    
-    func newGame() {
-        game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
-        //set random theme
-        let themeIndex = Int(arc4random_uniform(UInt32(themes.count)))
-        emojiChoices = themes[Array(themes.keys)[themeIndex]]!
-        emoji = [Int:String]()
-        
-        //update UI
-        updateViewFromModel()
     }
     
     @IBAction func touchNewGame(_ sender: UIButton) {
@@ -54,8 +47,19 @@ class ConcentrationViewController: UIViewController {
         updateViewFromModel()
     }
     
+    func newGame() {
+        game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+        // set random theme
+        let randomThemeIndex = Int(arc4random_uniform(UInt32(themes.count)))
+        chosenTheme = themes[randomThemeIndex]
+        emoji = [Int:String]()
+        
+        // update UI
+        updateViewFromModel()
+    }
+    
     func updateViewFromModel() {
-        //cards
+        // cards
         for index in cardButtons.indices {
             let button = cardButtons[index]
             let card = game.cards[index]
@@ -65,18 +69,25 @@ class ConcentrationViewController: UIViewController {
             }
             else {
                 button.setTitle("", for: UIControlState.normal)
-                button.backgroundColor = card.isMatched ? #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0) : #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
+                button.backgroundColor = card.isMatched ? #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0) : chosenTheme.primaryColor
             }
         }
-        //flips & score
+        // flips & score
         flipCountLabel.text = "Flips\n\(game.flipCount)"
+        flipCountLabel.textColor = chosenTheme.primaryColor
         scoreLabel.text = "Score\n\(game.score)"
+        scoreLabel.textColor = chosenTheme.primaryColor
+        
+        // new game button & background
+        newGameButton.setTitleColor(chosenTheme.primaryColor, for: UIControlState.normal)
+        view.backgroundColor = chosenTheme.secondaryColor
     }
     
     func emoji(for card: Card) -> String {
-        if emoji[card.identifier] == nil, emojiChoices.count > 0 {
-            let randomIndex = Int(arc4random_uniform(UInt32(emojiChoices.count)))
-            emoji[card.identifier] = emojiChoices.remove(at: randomIndex)
+        if emoji[card.identifier] == nil {
+            if let randomEmoji = chosenTheme.getRandomEmoji() {
+                emoji[card.identifier] = randomEmoji
+            }
         }
         return emoji[card.identifier] ?? "?"
     }
