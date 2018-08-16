@@ -23,7 +23,7 @@ class Concentration {
             let card = Card()
             cards += [card, card]
         }
-        //shuffle the cards
+        // shuffle the cards
         for index in cards.indices.reversed() {
             let randomIndex = Int(arc4random_uniform(UInt32(index)))
             cards.swapAt(index, randomIndex)
@@ -33,15 +33,15 @@ class Concentration {
     func chooseCard(at index: Int) {
         if !cards[index].isFaceUp && !cards[index].isMatched {
             if let matchIndex = indexOfFaceUpCard, matchIndex != index {
-                //check if cards match
+                // check if cards match
                 if cards[matchIndex].identifier == cards[index].identifier {
-                    //MATCH!
+                    // MATCH!
                     cards[matchIndex].isMatched = true
                     cards[index].isMatched = true
                     score += 2
                 }
                 else {
-                    //MISMATCH!
+                    // MISMATCH!
                     if flippedIdentifiers.contains(cards[matchIndex].identifier) { score -= 1 }
                     if cards[index].hasBeenFaceUp { score -= 1 }
                     flippedIdentifiers.insert(cards[matchIndex].identifier)
@@ -50,7 +50,7 @@ class Concentration {
                 indexOfFaceUpCard = nil
             }
             else {
-                //either no cards are face up or two cards are already face up
+                // either no cards are face up or two cards are already face up
                 for flipDownIndex in cards.indices { cards[flipDownIndex].isFaceUp = false }
                 indexOfFaceUpCard = index
             }
