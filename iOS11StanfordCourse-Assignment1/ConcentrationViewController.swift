@@ -12,7 +12,9 @@ import UIKit
 class ConcentrationViewController: UIViewController {
 
     // Model
-    var game: Concentration!
+    var game: Concentration! {
+        didSet { updateViewFromModel() }
+    }
     
     // View
     @IBOutlet var cardButtons: [UIButton]!
@@ -34,6 +36,7 @@ class ConcentrationViewController: UIViewController {
     
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         newGame()
     }
     
@@ -49,13 +52,11 @@ class ConcentrationViewController: UIViewController {
     
     func newGame() {
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+        
         // set random theme
         let randomThemeIndex = Int(arc4random_uniform(UInt32(themes.count)))
         chosenTheme = themes[randomThemeIndex]
         emoji = [Int:String]()
-        
-        // update UI
-        updateViewFromModel()
     }
     
     func updateViewFromModel() {
